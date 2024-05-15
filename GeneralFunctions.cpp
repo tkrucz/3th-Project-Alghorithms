@@ -3,7 +3,7 @@
 int getGraphOrder(char &tmp, int &n) {
     n = 0;
     tmp = getchar();
-    if (tmp == '\n')
+    if (tmp == '\n' || tmp == ' ')
         tmp = getchar();
     while (tmp >= '0' && tmp <= '9') {
         int digit = tmp - '0';
@@ -21,9 +21,10 @@ void degreeSequence(char &tmp, int& n) {
         cin >> deg;
         degreeSequence[i] = deg;
         cout << degreeSequence[i] << endl;
-        tmp = getchar();
-        while (tmp != '\n') {
-            tmp = getchar();
+        for(int j=0; j<deg; j++){
+            getchar(); // Space
+            getchar(); // Vertex IDs
         }
+        getchar(); // End of line
     }
 }
