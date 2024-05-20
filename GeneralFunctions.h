@@ -16,7 +16,9 @@ int getGraphOrder(char &tmp);
 
 void degreeSequence(int order);
 
-bool dfs();
+int countComponents(Vector *adjMat, int order);
+
+void dfs(Vector *adjMat, int order, int start, bool *visited);
 
 Vector* adjMatAlloc(int order);
 

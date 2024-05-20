@@ -112,53 +112,59 @@ void degreeSequence(int order) {
     }
     cout << endl;
 
-    cout << "Adjacency Matrix " << endl;
-    for (int i = 0; i < order; ++i) {
-        for (int j = 0; j < adjMat[i].Size(); ++j) {
-            int value = adjMat[i].get(j);
-            cout << value << ',';
-        }
-        cout << endl;
-    }
+//    cout << "Adjacency Matrix " << endl;
+//    for (int i = 0; i < order; ++i) {
+//        for (int j = 0; j < adjMat[i].Size(); ++j) {
+//            int value = adjMat[i].get(j);
+//            cout << value << ',';
+//        }
+//        cout << endl;
+//    }
 
+    cout << "Number of components: " << countComponents(adjMat,order);
     freeSpace(adjMat);
 }
 
-bool dfs(int **adjMat, int order, int start) {
-
+int countComponents(Vector *adjMat, int order) {
     bool *visited = new bool[order];
     for (int i = 0; i < order; ++i) {
         visited[i] = false;
     }
 
+    int components = 0;
+
+    for (int i = 0; i < order; ++i) {
+        if (!visited[i]) {
+            components++;
+            dfs(adjMat, order, i, visited);
+        }
+    }
+
+    delete[] visited;
+    return components;
+}
+
+void dfs(Vector *adjMat, int order, int start, bool *visited) {
     Stack path(order);
     path.push(start);
 
     while (!path.isEmpty()) {
         int current = path.pop();
 
+        if(current != 0 )
+            current --;
+
         if (!visited[current]) {
             visited[current] = true;
-            cout << "Visited vertex: " << current + 1 << endl;
-        }
 
-        for (int i = 0; i < order; ++i) {
-            if (adjMat[current][i] == 1 && !visited[i]) {
-                path.push(i);
+            // Explore neighbors of the current vertex
+            Vector& neighbors = adjMat[current];
+            for (int i = 0; i < neighbors.Size(); ++i) {
+                int neighbor = neighbors.get(i);
+                path.push(neighbor);
             }
         }
     }
-
-    // Check if all vertices are visited (or any other condition as needed)
-    bool allVisited = true;
-    for (int i = 0; i < order; ++i) {
-        if (!visited[i]) {
-            allVisited = false;
-            break;
-        }
-    }
-    delete[] visited;
-    return allVisited;
 }
 
 Vector* adjMatAlloc(int order){
