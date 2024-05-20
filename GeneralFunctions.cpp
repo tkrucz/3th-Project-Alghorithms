@@ -59,8 +59,8 @@ void merge(int *arr, int firstIndex, int middleIndex, int lastIndex) {
         tmp[k++] = arr[j++];
     }
 
-    for (int i = 0; i < size; i++) {
-        arr[firstIndex++] = tmp[i];
+    for (int u = 0; u < size; u++) {
+        arr[firstIndex++] = tmp[u];
     }
 
     delete[] tmp;
@@ -93,14 +93,17 @@ int getGraphOrder(char &tmp) {
 void degreeSequence(int order) {
     int deg;
     int ver;
-    int degreeSequence[order];
-    Vector *adjMat = adjMatAlloc(order);
+    int *degreeSequence = new int[order];
+    for (int i = 0; i < order; ++i) {
+        degreeSequence[i] = 0;
+    }
+//    Vector *adjMat = adjMatAlloc(order);
     for (int i = 0; i < order; i++) {
         cin >> deg;
         degreeSequence[i] = deg;
         for (int j = 0; j < deg; j++) {
             cin >> ver;
-            adjMat[i].push_back(ver);
+//            adjMat[i].push_back(ver);
         }
         getchar(); // End of line
     }
@@ -110,7 +113,7 @@ void degreeSequence(int order) {
     for (int i = 0; i < order; ++i) {
         cout << degreeSequence[i] << ' ';
     }
-    cout << endl;
+
 
 //    cout << "Adjacency Matrix " << endl;
 //    for (int i = 0; i < order; ++i) {
@@ -121,8 +124,11 @@ void degreeSequence(int order) {
 //        cout << endl;
 //    }
 
-    cout << "Number of components: " << countComponents(adjMat,order);
-    freeSpace(adjMat);
+//    printf("\n"); // endl after degree sequence
+//    cout << countComponents(adjMat,order);
+
+    delete[] degreeSequence;
+//    freeSpace(adjMat);
 }
 
 int countComponents(Vector *adjMat, int order) {
