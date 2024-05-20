@@ -5,4 +5,6 @@ set(CMAKE_CXX_STANDARD 17)
 
 add_executable(Graphs_3th_project main.cpp
         GeneralFunctions.h
-        GeneralFunctions.cpp)
+        GeneralFunctions.cpp
+        Vector.h
+        Vector.cpp)

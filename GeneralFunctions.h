@@ -2,6 +2,7 @@
 #define GRAPHS_3TH_PROJECT_GENERALFUNCTIONS_H
 
 #include "iostream"
+#include "Vector.h"
 
 using namespace std;
 
@@ -11,8 +12,14 @@ void merge(int *arr, int firstIndex, int middleIndex, int lastIndex);
 
 void mergeSort(int *arr, int firstIndex, int lastIndex);
 
-int getGraphOrder(char &tmp, int &n);
+int getGraphOrder(char &tmp);
 
-void degreeSequence(char &tmp, int& n);
+void degreeSequence(int order);
+
+bool dfs();
+
+Vector* adjMatAlloc(int order);
+
+void freeSpace(Vector *adjMat);
 
 #endif //GRAPHS_3TH_PROJECT_GENERALFUNCTIONS_H
