@@ -29,6 +29,15 @@ struct Stack {
     bool isEmpty() {
         return top == -1;
     }
+
+    bool contains(int x) {
+        for (int i = 0; i <= top; ++i) {
+            if (elements[i] == x) {
+                return true;
+            }
+        }
+        return false;
+    }
 };
 
 bool compare(int num1, int num2) {
@@ -97,13 +106,13 @@ void degreeSequence(int order) {
     for (int i = 0; i < order; ++i) {
         degreeSequence[i] = 0;
     }
-    //Vector *adjMat = adjMatAlloc(order);
+    Vector *adjMat = adjMatAlloc(order);
     for (int i = 0; i < order; i++) {
         cin >> deg;
         degreeSequence[i] = deg;
         for (int j = 0; j < deg; j++) {
             cin >> ver;
-            //adjMat[i].push_back(ver);
+            adjMat[i].push_back(ver);
         }
         getchar(); // End of line
     }
@@ -125,11 +134,10 @@ void degreeSequence(int order) {
 //    }
 
     printf("\n"); // endl after degree sequence
-    printf("?");
-    //cout << countComponents(adjMat, order);
+    cout << countComponents(adjMat, order);
 
     delete[] degreeSequence;
-    //freeSpace(adjMat);
+    freeSpace(adjMat);
 }
 
 int countComponents(Vector *adjMat, int order) {
@@ -168,12 +176,7 @@ void dfs(Vector *adjMat, int order, int start, bool *visited) {
             Vector &neighbors = adjMat[current];
             for (int i = 0; i < neighbors.Size(); ++i) {
                 int neighbor = neighbors.get(i);
-                if (!visited[neighbor - 1]) {
-                    if(path.top >0) {
-                        for (int k = 0; k < path.top; k++)
-                            if (path.elements[k] == neighbor)
-                                i++;
-                    }
+                if (!visited[neighbor - 1] && !path.contains(neighbor)) {
                     path.push(neighbor);
                 }
             }
