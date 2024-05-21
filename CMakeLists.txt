@@ -1,10 +1,9 @@
 cmake_minimum_required(VERSION 3.28)
-project(Graphs_3th_project)
+project(3rd_project___Graphs)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 14)
 
-add_executable(Graphs_3th_project main.cpp
-        GeneralFunctions.h
+add_executable(3rd_project___Graphs
+        main.cpp
         GeneralFunctions.cpp
-        Vector.h
         Vector.cpp)

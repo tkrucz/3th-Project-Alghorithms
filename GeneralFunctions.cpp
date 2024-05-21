@@ -78,7 +78,7 @@ void mergeSort(int *arr, int firstIndex, int lastIndex) {
 }
 
 int getGraphOrder(char &tmp) {
-    int n=0;
+    int n = 0;
     tmp = getchar();
     if (tmp == '\n' || tmp == ' ')
         tmp = getchar();
@@ -97,13 +97,13 @@ void degreeSequence(int order) {
     for (int i = 0; i < order; ++i) {
         degreeSequence[i] = 0;
     }
-//    Vector *adjMat = adjMatAlloc(order);
+    //Vector *adjMat = adjMatAlloc(order);
     for (int i = 0; i < order; i++) {
         cin >> deg;
         degreeSequence[i] = deg;
         for (int j = 0; j < deg; j++) {
             cin >> ver;
-//            adjMat[i].push_back(ver);
+            //adjMat[i].push_back(ver);
         }
         getchar(); // End of line
     }
@@ -124,11 +124,12 @@ void degreeSequence(int order) {
 //        cout << endl;
 //    }
 
-//    printf("\n"); // endl after degree sequence
-//    cout << countComponents(adjMat,order);
+    printf("\n"); // endl after degree sequence
+    printf("?");
+    //cout << countComponents(adjMat, order);
 
     delete[] degreeSequence;
-//    freeSpace(adjMat);
+    //freeSpace(adjMat);
 }
 
 int countComponents(Vector *adjMat, int order) {
@@ -142,7 +143,7 @@ int countComponents(Vector *adjMat, int order) {
     for (int i = 0; i < order; ++i) {
         if (!visited[i]) {
             components++;
-            dfs(adjMat, order, i, visited);
+            dfs(adjMat, order, i + 1, visited);
         }
     }
 
@@ -157,27 +158,34 @@ void dfs(Vector *adjMat, int order, int start, bool *visited) {
     while (!path.isEmpty()) {
         int current = path.pop();
 
-        if(current != 0 )
-            current --;
+        if (current != 0)
+            current--;
 
         if (!visited[current]) {
             visited[current] = true;
 
             // Explore neighbors of the current vertex
-            Vector& neighbors = adjMat[current];
+            Vector &neighbors = adjMat[current];
             for (int i = 0; i < neighbors.Size(); ++i) {
                 int neighbor = neighbors.get(i);
-                path.push(neighbor);
+                if (!visited[neighbor - 1]) {
+                    if(path.top >0) {
+                        for (int k = 0; k < path.top; k++)
+                            if (path.elements[k] == neighbor)
+                                i++;
+                    }
+                    path.push(neighbor);
+                }
             }
         }
     }
 }
 
-Vector* adjMatAlloc(int order){
-    Vector *adjMat=new Vector[order];
+Vector *adjMatAlloc(int order) {
+    Vector *adjMat = new Vector[order];
     return adjMat;
 }
 
-void freeSpace(Vector *adjMat){
+void freeSpace(Vector *adjMat) {
     delete[] adjMat;
 }
