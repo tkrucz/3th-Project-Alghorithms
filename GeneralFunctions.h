@@ -14,18 +14,20 @@ void mergeSort(int *arr, int firstIndex, int lastIndex);
 
 int getGraphOrder(char &tmp);
 
-void degreeSequence(int order);
+void degreeSequence(long long int order);
 
-int countComponents(Vector *adjMat, int order);
+int countComponents(Vector *adjMat, long long int order, long long int& complementsEdges);
 
-void dfs(Vector *adjMat, int order, int start, bool *visited);
+void dfs(Vector *adjMat, long long int order, int start, bool *visited, long long int& edges);
 
-bool bipartite(Vector *adjMat, int order); // TO DO!
+bool bipartite(Vector *adjMat, long long int order);
 
-void bipartiteDFS(Vector *adjMat, int order, int start, bool *visited, int *bipartite); // TO DO!
+void bipartiteDFS(Vector *adjMat, long long int order, int start, bool *visited, int *bipartite);
 
-Vector* adjMatAlloc(int order);
+Vector* adjMatAlloc(long long int order);
 
 void freeSpace(Vector *adjMat);
+
+void printNotImplemented();
 
 #endif //GRAPHS_3TH_PROJECT_GENERALFUNCTIONS_H

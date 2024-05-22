@@ -3,9 +3,9 @@
 struct Stack {
     int *elements;
     int top;
-    int capacity;
+    long long int capacity;
 
-    Stack(int size) : top(-1), capacity(size) {
+    Stack(long long int size) : top(-1), capacity(size) {
         elements = new int[size];
     }
 
@@ -99,9 +99,10 @@ int getGraphOrder(char &tmp) {
     return n;
 }
 
-void degreeSequence(int order) {
-    int deg;
-    int ver;
+void degreeSequence(long long int order) {
+    int deg = 0;
+    int ver = 0;
+    long long int complementsEdges = 0;
     int *degreeSequence = new int[order];
     for (int i = 0; i < order; ++i) {
         degreeSequence[i] = 0;
@@ -123,7 +124,6 @@ void degreeSequence(int order) {
         cout << degreeSequence[i] << ' ';
     }
 
-
 //    cout << "Adjacency Matrix " << endl;
 //    for (int i = 0; i < order; ++i) {
 //        for (int j = 0; j < adjMat[i].Size(); ++j) {
@@ -134,36 +134,45 @@ void degreeSequence(int order) {
 //    }
 
     printf("\n"); // endl after degree sequence
-    cout << countComponents(adjMat, order);
-    if(bipartite(adjMat,order))
+    cout << countComponents(adjMat, order, complementsEdges);
+
+    if (bipartite(adjMat, order))
         printf("\nT");
     else
         printf("\nF");
+
+    printNotImplemented();
+    printf("\n%lld", complementsEdges);
 
     delete[] degreeSequence;
     freeSpace(adjMat);
 }
 
-int countComponents(Vector *adjMat, int order) {
+int countComponents(Vector *adjMat, long long int order, long long int &complementsEdges) {
     bool *visited = new bool[order];
     for (int i = 0; i < order; ++i) {
         visited[i] = false;
     }
 
     int components = 0;
+    long long int edges = 0;
 
     for (int i = 0; i < order; ++i) {
         if (!visited[i]) {
             components++;
-            dfs(adjMat, order, i + 1, visited);
+            dfs(adjMat, order, i + 1, visited, edges);
         }
     }
+
+    complementsEdges = order * (order - 1) / 2;
+    edges = edges / 2;
+    complementsEdges = complementsEdges - edges;
 
     delete[] visited;
     return components;
 }
 
-void dfs(Vector *adjMat, int order, int start, bool *visited) {
+void dfs(Vector *adjMat, long long int order, int start, bool *visited, long long int &edges) {
     Stack path(order);
     path.push(start);
 
@@ -180,6 +189,7 @@ void dfs(Vector *adjMat, int order, int start, bool *visited) {
             Vector &neighbors = adjMat[current];
             for (int i = 0; i < neighbors.Size(); ++i) {
                 int neighbor = neighbors.get(i);
+                edges++;
                 if (!visited[neighbor - 1] && !path.contains(neighbor)) {
                     path.push(neighbor);
                 }
@@ -188,7 +198,7 @@ void dfs(Vector *adjMat, int order, int start, bool *visited) {
     }
 }
 
-bool bipartite(Vector *adjMat, int order){
+bool bipartite(Vector *adjMat, long long int order) {
     bool *visited = new bool[order];
     for (int i = 0; i < order; ++i) {
         visited[i] = false;
@@ -202,15 +212,15 @@ bool bipartite(Vector *adjMat, int order){
 
     for (int i = 0; i < order; ++i) {
         if (!visited[i]) {
-            bipartiteDFS(adjMat,order,i+1,visited,bipartite);
+            bipartiteDFS(adjMat, order, i + 1, visited, bipartite);
         }
     }
 
-    for(int i = 0; i < order; i++){
+    for (int i = 0; i < order; i++) {
         int group = bipartite[i];
-        for(int j = 0; j < adjMat[i].Size(); j++) {
+        for (int j = 0; j < adjMat[i].Size(); j++) {
             int neighbour = adjMat[i].get(j);
-            if(bipartite[neighbour - 1] == group) {
+            if (bipartite[neighbour - 1] == group) {
                 return false;
             }
         }
@@ -220,7 +230,7 @@ bool bipartite(Vector *adjMat, int order){
     return true;
 }
 
-void bipartiteDFS(Vector *adjMat, int order, int start, bool *visited, int *bipartite){
+void bipartiteDFS(Vector *adjMat, long long int order, int start, bool *visited, int *bipartite) {
     Stack path(order);
     path.push(start);
     int group = 0;
@@ -233,7 +243,7 @@ void bipartiteDFS(Vector *adjMat, int order, int start, bool *visited, int *bipa
 
         if (!visited[current]) {
             visited[current] = true;
-            if(bipartite[current] == 1)
+            if (bipartite[current] == 1)
                 group = 2;
             else
                 group = 1;
@@ -252,11 +262,20 @@ void bipartiteDFS(Vector *adjMat, int order, int start, bool *visited, int *bipa
     }
 }
 
-Vector *adjMatAlloc(int order) {
+Vector *adjMatAlloc(long long int order) {
     Vector *adjMat = new Vector[order];
     return adjMat;
 }
 
 void freeSpace(Vector *adjMat) {
     delete[] adjMat;
+}
+
+void printNotImplemented() {
+    printf("\n?"); // the eccentricity of vertices
+    printf("\n?"); // planarity
+    printf("\n?"); // vertices colours GREEDY
+    printf("\n?"); // vertices colours LFS
+    printf("\n?"); // vertices colours SLF
+    printf("\n?"); // the number of different C4 subgraphs
 }

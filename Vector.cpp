@@ -21,7 +21,7 @@ Vector::Vector(Vector &&other) :
 }
 
 // Get the value at index i
-double Vector::get(int i) {
+int Vector::get(int i) {
     return array[i];
 }
 

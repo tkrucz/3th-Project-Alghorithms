@@ -13,7 +13,7 @@ public:
 
     Vector(Vector &&other);
 
-    double get(int i);
+    int get(int i);
 
     void set(int i, int v);
 
