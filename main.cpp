@@ -11,7 +11,6 @@ int main() {
     for (int i = 0; i < k; i++) {
         n = getGraphOrder(tmp);
         degreeSequence(n);
-        //printf("\n?"); // bipartiteness;
         printf("\n?"); // the eccentricity of vertices
         printf("\n?"); // planarity
         printf("\n?"); // vertices colours GREEDY
