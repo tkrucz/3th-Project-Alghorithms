@@ -135,6 +135,10 @@ void degreeSequence(int order) {
 
     printf("\n"); // endl after degree sequence
     cout << countComponents(adjMat, order);
+    if(bipartite(adjMat,order))
+        printf("\nT");
+    else
+        printf("\nF");
 
     delete[] degreeSequence;
     freeSpace(adjMat);
@@ -178,6 +182,70 @@ void dfs(Vector *adjMat, int order, int start, bool *visited) {
                 int neighbor = neighbors.get(i);
                 if (!visited[neighbor - 1] && !path.contains(neighbor)) {
                     path.push(neighbor);
+                }
+            }
+        }
+    }
+}
+
+bool bipartite(Vector *adjMat, int order){
+    bool *visited = new bool[order];
+    for (int i = 0; i < order; ++i) {
+        visited[i] = false;
+    }
+
+    int *bipartite = new int[order];
+    for (int i = 0; i < order; ++i) {
+        bipartite[i] = 0;
+    }
+    bipartite[0] = 1;
+
+    for (int i = 0; i < order; ++i) {
+        if (!visited[i]) {
+            bipartiteDFS(adjMat,order,i+1,visited,bipartite);
+        }
+    }
+
+    for(int i = 0; i < order; i++){
+        int group = bipartite[i];
+        for(int j = 0; j < adjMat[i].Size(); j++) {
+            int neighbour = adjMat[i].get(j);
+            if(bipartite[neighbour - 1] == group) {
+                return false;
+            }
+        }
+    }
+    delete[] visited;
+    delete[] bipartite;
+    return true;
+}
+
+void bipartiteDFS(Vector *adjMat, int order, int start, bool *visited, int *bipartite){
+    Stack path(order);
+    path.push(start);
+    int group = 0;
+
+    while (!path.isEmpty()) {
+        int current = path.pop();
+
+        if (current != 0)
+            current--;
+
+        if (!visited[current]) {
+            visited[current] = true;
+            if(bipartite[current] == 1)
+                group = 2;
+            else
+                group = 1;
+
+
+            // Explore neighbors of the current vertex
+            Vector &neighbors = adjMat[current];
+            for (int i = 0; i < neighbors.Size(); ++i) {
+                int neighbor = neighbors.get(i);
+                if (!visited[neighbor - 1] && !path.contains(neighbor)) {
+                    path.push(neighbor);
+                    bipartite[neighbor - 1] = group;
                 }
             }
         }

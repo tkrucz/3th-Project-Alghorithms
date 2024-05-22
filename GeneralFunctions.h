@@ -20,6 +20,10 @@ int countComponents(Vector *adjMat, int order);
 
 void dfs(Vector *adjMat, int order, int start, bool *visited);
 
+bool bipartite(Vector *adjMat, int order); // TO DO!
+
+void bipartiteDFS(Vector *adjMat, int order, int start, bool *visited, int *bipartite); // TO DO!
+
 Vector* adjMatAlloc(int order);
 
 void freeSpace(Vector *adjMat);
