@@ -11,15 +11,9 @@ public:
 
     Vector(const Vector &other);
 
-    Vector(Vector &&other);
-
     int get(int i);
 
-    void set(int i, int v);
-
     void push_back(int v);
-
-    void pop_back();
 
     int Size() const;
 

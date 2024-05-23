@@ -87,16 +87,7 @@ void mergeSort(int *arr, int firstIndex, int lastIndex) {
 }
 
 int getGraphOrder(char &tmp) {
-    int n = 0;
-    tmp = getchar();
-    if (tmp == '\n' || tmp == ' ')
-        tmp = getchar();
-    while (tmp >= '0' && tmp <= '9') {
-        int digit = tmp - '0';
-        n = n * 10 + digit;
-        tmp = getchar();
-    }
-    return n;
+    return getNumber(tmp);
 }
 
 void degreeSequence(long long int order) {
@@ -121,26 +112,20 @@ void degreeSequence(long long int order) {
     mergeSort(degreeSequence, 0, order - 1);
 
     for (int i = 0; i < order; ++i) {
-        cout << degreeSequence[i] << ' ';
+        printf("%d ", degreeSequence[i]);
     }
 
-//    cout << "Adjacency Matrix " << endl;
-//    for (int i = 0; i < order; ++i) {
-//        for (int j = 0; j < adjMat[i].Size(); ++j) {
-//            int value = adjMat[i].get(j);
-//            cout << value << ',';
-//        }
-//        cout << endl;
-//    }
-
-    printf("\n"); // endl after degree sequence
-    cout << countComponents(adjMat, order, complementsEdges);
+    printf("\n%d", countComponents(adjMat, order, complementsEdges));
 
     if (bipartite(adjMat, order))
         printf("\nT");
     else
         printf("\nF");
 
+    printf("\n?"); // the eccentricity of vertices
+    printf("\n?"); // planarity
+    printf("\n"); // end after planarity
+    coloursGreedy(adjMat,order);
     printNotImplemented();
     printf("\n%lld", complementsEdges);
 
@@ -216,15 +201,19 @@ bool bipartite(Vector *adjMat, long long int order) {
         }
     }
 
+    // check if current vertex is connected with vertex which has the same colour
     for (int i = 0; i < order; i++) {
         int group = bipartite[i];
         for (int j = 0; j < adjMat[i].Size(); j++) {
             int neighbour = adjMat[i].get(j);
             if (bipartite[neighbour - 1] == group) {
+                delete[] visited;
+                delete[] bipartite;
                 return false;
             }
         }
     }
+
     delete[] visited;
     delete[] bipartite;
     return true;
@@ -248,7 +237,6 @@ void bipartiteDFS(Vector *adjMat, long long int order, int start, bool *visited,
             else
                 group = 1;
 
-
             // Explore neighbors of the current vertex
             Vector &neighbors = adjMat[current];
             for (int i = 0; i < neighbors.Size(); ++i) {
@@ -262,6 +250,51 @@ void bipartiteDFS(Vector *adjMat, long long int order, int start, bool *visited,
     }
 }
 
+void coloursGreedy(Vector *adjMat, long long int order){
+    bool *visited = new bool[order];
+    for (int i = 0; i < order; ++i) {
+        visited[i] = false;
+    }
+
+    int *coloursGreedy = new int[order];
+    for (int i = 0; i < order; ++i) {
+        coloursGreedy[i] = -1; // no colour at the beginning
+    }
+    coloursGreedy[0] = 1;
+
+    // Add a for loop to assign colors properly
+    for (int u = 0; u < order; ++u) {
+        // Reset visited array to mark all colors as available
+        for (int i = 0; i < order; ++i) {
+            visited[i] = false;
+        }
+
+        // Mark colors used by adjacent vertices as unavailable
+        for (int i = 0; i < adjMat[u].Size(); ++i) {
+            int neighbour = adjMat[u].get(i) - 1; // Adjust for 0-based index
+            if (coloursGreedy[neighbour] != -1) {
+                visited[coloursGreedy[neighbour] - 1] = true;
+            }
+        }
+
+        int color;
+        for (color = 0; color < order; ++color) {
+            if (!visited[color]) {
+                break;
+            }
+        }
+
+        // Assign the found color
+        coloursGreedy[u] = color + 1; // Adjusting to 1-based color
+    }
+
+    for(int i = 0; i < order; i++)
+        printf("%d ", coloursGreedy[i]);
+
+    delete[] visited;
+    delete[] coloursGreedy;
+}
+
 Vector *adjMatAlloc(long long int order) {
     Vector *adjMat = new Vector[order];
     return adjMat;
@@ -272,10 +305,20 @@ void freeSpace(Vector *adjMat) {
 }
 
 void printNotImplemented() {
-    printf("\n?"); // the eccentricity of vertices
-    printf("\n?"); // planarity
-    printf("\n?"); // vertices colours GREEDY
     printf("\n?"); // vertices colours LFS
     printf("\n?"); // vertices colours SLF
     printf("\n?"); // the number of different C4 subgraphs
+}
+
+int getNumber(char& tmp){
+    int n = 0;
+    tmp = getchar();
+    if (tmp == '\n' || tmp == ' ')
+        tmp = getchar();
+    while (tmp >= '0' && tmp <= '9') {
+        int digit = tmp - '0';
+        n = n * 10 + digit;
+        tmp = getchar();
+    }
+    return n;
 }

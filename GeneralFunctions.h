@@ -24,10 +24,14 @@ bool bipartite(Vector *adjMat, long long int order);
 
 void bipartiteDFS(Vector *adjMat, long long int order, int start, bool *visited, int *bipartite);
 
+void coloursGreedy(Vector *adjMat, long long int order);
+
 Vector* adjMatAlloc(long long int order);
 
 void freeSpace(Vector *adjMat);
 
 void printNotImplemented();
+
+int getNumber(char& tmp);
 
 #endif //GRAPHS_3TH_PROJECT_GENERALFUNCTIONS_H
