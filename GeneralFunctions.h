@@ -24,7 +24,7 @@ bool bipartite(Vector *adjMat, long long int order);
 
 void bipartiteDFS(Vector *adjMat, long long int order, int start, bool *visited, int *bipartite);
 
-void coloursGreedy(Vector *adjMat, long long int order);
+void coloursGreedy(Vector *adjMat, long long int order, int maxDegree);
 
 Vector* adjMatAlloc(long long int order);
 

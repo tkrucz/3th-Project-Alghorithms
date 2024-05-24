@@ -120,6 +120,7 @@ void degreeSequence(long long int order) {
 
     printf("\n%d", countComponents(adjMat, order, complementsEdges));
 
+
     if (bipartite(adjMat, order))
         printf("\nT");
     else
@@ -128,7 +129,7 @@ void degreeSequence(long long int order) {
     printf("\n?"); // the eccentricity of vertices
     printf("\n?"); // planarity
     printf("\n"); // end after planarity
-    coloursGreedy(adjMat, order);
+    coloursGreedy(adjMat, order, degreeSequence[0]);
     printNotImplemented();
     printf("\n%lld", complementsEdges);
 
@@ -243,7 +244,7 @@ void bipartiteDFS(Vector *adjMat, long long int order, int start, bool *visited,
         Vector &neighbors = adjMat[current];
         for (int i = 0; i < neighbors.Size(); ++i) {
             int neighbor = neighbors.get(i);
-            if (!visited[neighbor - 1] ) {
+            if (!visited[neighbor - 1]) {
                 path.push(neighbor);
                 visited[neighbor - 1] = true;
                 bipartite[neighbor - 1] = group;
@@ -252,22 +253,23 @@ void bipartiteDFS(Vector *adjMat, long long int order, int start, bool *visited,
     }
 }
 
-void coloursGreedy(Vector *adjMat, long long int order) {
-    bool *visited = new bool[order];
-    for (int i = 0; i < order; ++i) {
+void coloursGreedy(Vector *adjMat, long long int order, int maxDegree) {
+
+    bool *visited = new bool[maxDegree + 1];
+    for (int i = 0; i < maxDegree + 1; ++i) {
         visited[i] = false;
     }
 
     int *coloursGreedy = new int[order];
-    for (int i = 0; i < order; ++i) {
+    for (int i = 0; i < order ; ++i) {
         coloursGreedy[i] = -1; // No colour at the beginning
     }
     coloursGreedy[0] = 1;
 
 
-    for (int u = 0; u < order; ++u) {
+    for (int u = 0; u < order ; ++u) {
 
-        for (int i = 0; i < order; ++i) {
+        for (int i = 0; i < maxDegree + 1; ++i) {
             visited[i] = false;
         }
 
@@ -281,7 +283,7 @@ void coloursGreedy(Vector *adjMat, long long int order) {
 
         // Find the first available colour
         int color;
-        for (color = 0; color < order; ++color) {
+        for (color = 0; color < maxDegree + 1; ++color) {
             if (!visited[color]) {
                 break;
             }
