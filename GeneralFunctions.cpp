@@ -129,8 +129,11 @@ void degreeSequence(long long int order) {
     printf("\n?"); // the eccentricity of vertices
     printf("\n?"); // planarity
     printf("\n"); // end after planarity
+
     coloursGreedy(adjMat, order, degreeSequence[0]);
+
     printNotImplemented();
+
     printf("\n%lld", complementsEdges);
 
     delete[] degreeSequence;
@@ -312,6 +315,12 @@ void printNotImplemented() {
     printf("\n?"); // vertices colours LFS
     printf("\n?"); // vertices colours SLF
     printf("\n?"); // the number of different C4 subgraphs
+}
+
+void printAnswer(char &tmp){
+    long long int order = getGraphOrder(tmp);
+    degreeSequence(order);
+    printf("\n"); // endl after number of complements edges
 }
 
 int getNumber(char &tmp) {

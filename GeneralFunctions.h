@@ -32,6 +32,8 @@ void freeSpace(Vector *adjMat);
 
 void printNotImplemented();
 
+void printAnswer(char &tmp);
+
 int getNumber(char& tmp);
 
 #endif //GRAPHS_3TH_PROJECT_GENERALFUNCTIONS_H
