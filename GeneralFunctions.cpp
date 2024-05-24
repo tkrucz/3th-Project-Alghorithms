@@ -108,7 +108,7 @@ void degreeSequence(long long int order) {
             ver = getNumber(tmp);
             adjMat[i].push_back(ver);
         }
-        if(tmp != '\n')
+        if (tmp != '\n')
             getchar(); // End of line
     }
 
@@ -164,23 +164,22 @@ void dfs(Vector *adjMat, long long int order, int start, bool *visited, long lon
     Stack path(order);
     path.push(start);
 
+    visited[start - 1] = true;
+
     while (!path.isEmpty()) {
         int current = path.pop();
 
         if (current != 0)
             current--;
 
-        if (!visited[current]) {
-            visited[current] = true;
-
-            // Explore neighbors of the current vertex
-            Vector &neighbors = adjMat[current];
-            for (int i = 0; i < neighbors.Size(); ++i) {
-                int neighbor = neighbors.get(i);
-                edges++;
-                if (!visited[neighbor - 1] && !path.contains(neighbor)) {
-                    path.push(neighbor);
-                }
+        // Explore neighbors of the current vertex
+        Vector &neighbors = adjMat[current];
+        for (int i = 0; i < neighbors.Size(); ++i) {
+            int neighbor = neighbors.get(i);
+            edges++;
+            if (!visited[neighbor - 1]) {
+                path.push(neighbor);
+                visited[neighbor - 1] = true;
             }
         }
     }
@@ -204,7 +203,7 @@ bool bipartite(Vector *adjMat, long long int order) {
         }
     }
 
-    // check if current vertex is connected with vertex which has the same colour
+    // Check if current vertex is connected with vertex which has the same group
     for (int i = 0; i < order; i++) {
         int group = bipartite[i];
         for (int j = 0; j < adjMat[i].Size(); j++) {
@@ -225,7 +224,9 @@ bool bipartite(Vector *adjMat, long long int order) {
 void bipartiteDFS(Vector *adjMat, long long int order, int start, bool *visited, int *bipartite) {
     Stack path(order);
     path.push(start);
+
     int group;
+    visited[start - 1] = true;
 
     while (!path.isEmpty()) {
         int current = path.pop();
@@ -233,21 +234,19 @@ void bipartiteDFS(Vector *adjMat, long long int order, int start, bool *visited,
         if (current != 0)
             current--;
 
-        if (!visited[current]) {
-            visited[current] = true;
-            if (bipartite[current] == 1)
-                group = 2;
-            else
-                group = 1;
+        if (bipartite[current] == 1)
+            group = 2;
+        else
+            group = 1;
 
-            // Explore neighbors of the current vertex
-            Vector &neighbors = adjMat[current];
-            for (int i = 0; i < neighbors.Size(); ++i) {
-                int neighbor = neighbors.get(i);
-                if (!visited[neighbor - 1] && !path.contains(neighbor)) {
-                    path.push(neighbor);
-                    bipartite[neighbor - 1] = group;
-                }
+        // Explore neighbors of the current vertex
+        Vector &neighbors = adjMat[current];
+        for (int i = 0; i < neighbors.Size(); ++i) {
+            int neighbor = neighbors.get(i);
+            if (!visited[neighbor - 1] ) {
+                path.push(neighbor);
+                visited[neighbor - 1] = true;
+                bipartite[neighbor - 1] = group;
             }
         }
     }
@@ -261,25 +260,26 @@ void coloursGreedy(Vector *adjMat, long long int order) {
 
     int *coloursGreedy = new int[order];
     for (int i = 0; i < order; ++i) {
-        coloursGreedy[i] = -1; // no colour at the beginning
+        coloursGreedy[i] = -1; // No colour at the beginning
     }
     coloursGreedy[0] = 1;
 
-    // Add a for loop to assign colors properly
+
     for (int u = 0; u < order; ++u) {
-        // Reset visited array to mark all colors as available
+
         for (int i = 0; i < order; ++i) {
             visited[i] = false;
         }
 
         // Mark colors used by adjacent vertices as unavailable
         for (int i = 0; i < adjMat[u].Size(); ++i) {
-            int neighbour = adjMat[u].get(i) - 1; // Adjust for 0-based index
+            int neighbour = adjMat[u].get(i) - 1;
             if (coloursGreedy[neighbour] != -1) {
                 visited[coloursGreedy[neighbour] - 1] = true;
             }
         }
 
+        // Find the first available colour
         int color;
         for (color = 0; color < order; ++color) {
             if (!visited[color]) {
@@ -287,8 +287,7 @@ void coloursGreedy(Vector *adjMat, long long int order) {
             }
         }
 
-        // Assign the found color
-        coloursGreedy[u] = color + 1; // Adjusting to 1-based color
+        coloursGreedy[u] = color + 1;
     }
 
     for (int i = 0; i < order; i++)
