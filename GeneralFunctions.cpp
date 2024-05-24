@@ -91,22 +91,25 @@ int getGraphOrder(char &tmp) {
 }
 
 void degreeSequence(long long int order) {
-    int deg = 0;
-    int ver = 0;
+    int deg, ver;
     long long int complementsEdges = 0;
     int *degreeSequence = new int[order];
+    char tmp;
+
     for (int i = 0; i < order; ++i) {
         degreeSequence[i] = 0;
     }
+
     Vector *adjMat = adjMatAlloc(order);
     for (int i = 0; i < order; i++) {
-        cin >> deg;
+        deg = getNumber(tmp);
         degreeSequence[i] = deg;
         for (int j = 0; j < deg; j++) {
-            cin >> ver;
+            ver = getNumber(tmp);
             adjMat[i].push_back(ver);
         }
-        getchar(); // End of line
+        if(tmp != '\n')
+            getchar(); // End of line
     }
 
     mergeSort(degreeSequence, 0, order - 1);
@@ -125,7 +128,7 @@ void degreeSequence(long long int order) {
     printf("\n?"); // the eccentricity of vertices
     printf("\n?"); // planarity
     printf("\n"); // end after planarity
-    coloursGreedy(adjMat,order);
+    coloursGreedy(adjMat, order);
     printNotImplemented();
     printf("\n%lld", complementsEdges);
 
@@ -222,7 +225,7 @@ bool bipartite(Vector *adjMat, long long int order) {
 void bipartiteDFS(Vector *adjMat, long long int order, int start, bool *visited, int *bipartite) {
     Stack path(order);
     path.push(start);
-    int group = 0;
+    int group;
 
     while (!path.isEmpty()) {
         int current = path.pop();
@@ -250,7 +253,7 @@ void bipartiteDFS(Vector *adjMat, long long int order, int start, bool *visited,
     }
 }
 
-void coloursGreedy(Vector *adjMat, long long int order){
+void coloursGreedy(Vector *adjMat, long long int order) {
     bool *visited = new bool[order];
     for (int i = 0; i < order; ++i) {
         visited[i] = false;
@@ -288,7 +291,7 @@ void coloursGreedy(Vector *adjMat, long long int order){
         coloursGreedy[u] = color + 1; // Adjusting to 1-based color
     }
 
-    for(int i = 0; i < order; i++)
+    for (int i = 0; i < order; i++)
         printf("%d ", coloursGreedy[i]);
 
     delete[] visited;
@@ -310,7 +313,7 @@ void printNotImplemented() {
     printf("\n?"); // the number of different C4 subgraphs
 }
 
-int getNumber(char& tmp){
+int getNumber(char &tmp) {
     int n = 0;
     tmp = getchar();
     if (tmp == '\n' || tmp == ' ')
