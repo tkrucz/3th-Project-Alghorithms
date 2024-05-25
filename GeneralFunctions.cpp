@@ -29,31 +29,18 @@ struct Stack {
     bool isEmpty() {
         return top == -1;
     }
-
-    bool contains(int x) {
-        for (int i = 0; i <= top; ++i) {
-            if (elements[i] == x) {
-                return true;
-            }
-        }
-        return false;
-    }
 };
 
-bool compare(int num1, int num2) {
-    return num1 > num2;
-}
-
-void merge(int *arr, int firstIndex, int middleIndex, int lastIndex) {
+void merge(Vertex_ID_AND_DEGREE *arr, int firstIndex, int middleIndex, int lastIndex) {
     int size = lastIndex - firstIndex + 1;
-    int *tmp = new int[size];
+    Vertex_ID_AND_DEGREE *tmp = new Vertex_ID_AND_DEGREE[size];
 
     int i = firstIndex;
     int j = middleIndex + 1;
     int k = 0;
 
     while (i <= middleIndex && j <= lastIndex) {
-        if (compare(arr[i], arr[j])) {
+        if (arr[i].degree > arr[j].degree) {
             tmp[k++] = arr[i++];
         } else {
             tmp[k++] = arr[j++];
@@ -69,13 +56,13 @@ void merge(int *arr, int firstIndex, int middleIndex, int lastIndex) {
     }
 
     for (int u = 0; u < size; u++) {
-        arr[firstIndex++] = tmp[u];
+        arr[firstIndex + u] = tmp[u];
     }
 
     delete[] tmp;
 }
 
-void mergeSort(int *arr, int firstIndex, int lastIndex) {
+void mergeSort(Vertex_ID_AND_DEGREE *arr, int firstIndex, int lastIndex) {
     if (firstIndex >= lastIndex)
         return;
 
@@ -86,6 +73,48 @@ void mergeSort(int *arr, int firstIndex, int lastIndex) {
     merge(arr, firstIndex, middleIndex, lastIndex);
 }
 
+void merge2(Vertex_ID_AND_DEGREE *arr, int firstIndex, int middleIndex, int lastIndex) {
+    int size = lastIndex - firstIndex + 1;
+    Vertex_ID_AND_DEGREE *tmp = new Vertex_ID_AND_DEGREE[size];
+
+    int i = firstIndex;
+    int j = middleIndex + 1;
+    int k = 0;
+
+    while (i <= middleIndex && j <= lastIndex) {
+        if (arr[i].id < arr[j].id) {
+            tmp[k++] = arr[i++];
+        } else {
+            tmp[k++] = arr[j++];
+        }
+    }
+
+    while (i <= middleIndex) {
+        tmp[k++] = arr[i++];
+    }
+
+    while (j <= lastIndex) {
+        tmp[k++] = arr[j++];
+    }
+
+    for (int u = 0; u < size; u++) {
+        arr[firstIndex + u] = tmp[u];
+    }
+
+    delete[] tmp;
+}
+
+void mergeSortIDS(Vertex_ID_AND_DEGREE *arr, int firstIndex, int lastIndex) {
+    if (firstIndex >= lastIndex)
+        return;
+
+    int middleIndex = (firstIndex + lastIndex) / 2;
+    mergeSort(arr, firstIndex, middleIndex);
+    mergeSort(arr, middleIndex + 1, lastIndex);
+
+    merge2(arr, firstIndex, middleIndex, lastIndex);
+}
+
 int getGraphOrder(char &tmp) {
     return getNumber(tmp);
 }
@@ -93,17 +122,17 @@ int getGraphOrder(char &tmp) {
 void degreeSequence(long long int order) {
     int deg, ver;
     long long int complementsEdges = 0;
-    int *degreeSequence = new int[order];
+    Vertex_ID_AND_DEGREE *table = new Vertex_ID_AND_DEGREE[order];
     char tmp;
 
     for (int i = 0; i < order; ++i) {
-        degreeSequence[i] = 0;
+        table[i] = {i, 0};
     }
 
     Vector *adjMat = adjMatAlloc(order);
     for (int i = 0; i < order; i++) {
         deg = getNumber(tmp);
-        degreeSequence[i] = deg;
+        table[i].degree = deg;
         for (int j = 0; j < deg; j++) {
             ver = getNumber(tmp);
             adjMat[i].push_back(ver);
@@ -112,10 +141,11 @@ void degreeSequence(long long int order) {
             getchar(); // End of line
     }
 
-    mergeSort(degreeSequence, 0, order - 1);
+    mergeSort(table, 0, order - 1);
+    int maxDegree = table[0].degree;
 
     for (int i = 0; i < order; ++i) {
-        printf("%d ", degreeSequence[i]);
+        printf("%d ", table[i].degree);
     }
 
     printf("\n%d", countComponents(adjMat, order, complementsEdges));
@@ -130,15 +160,15 @@ void degreeSequence(long long int order) {
     printf("\n?"); // planarity
     printf("\n"); // end after planarity
 
-    coloursGreedy(adjMat, order, degreeSequence[0]);
-    printf("\n");
-    coloursLF(adjMat, degreeSequence, order);
+    coloursGreedy(adjMat, order, maxDegree);
+    //printf("\n");
+    //coloursLF(adjMat, table, order, maxDegree);
 
     printNotImplemented();
 
     printf("\n%lld", complementsEdges);
 
-    delete[] degreeSequence;
+    delete[] table;
     freeSpace(adjMat);
 }
 
@@ -260,7 +290,7 @@ void bipartiteDFS(Vector *adjMat, long long int order, int start, bool *visited,
 
 void coloursGreedy(Vector *adjMat, long long int order, int maxDegree) {
     bool *visited = new bool[maxDegree + 1];
-    
+
     int *coloursGreedy = new int[order];
     for (int i = 0; i < order; ++i) {
         coloursGreedy[i] = -1; // No colour at the beginning
@@ -300,8 +330,8 @@ void coloursGreedy(Vector *adjMat, long long int order, int maxDegree) {
     delete[] coloursGreedy;
 }
 
-void coloursLF(Vector *adjMat, int *degreeSequence, long long int order) {
-    int maxDegree = degreeSequence[0];
+void coloursLF(Vector *adjMat, Vertex_ID_AND_DEGREE *arr, long long int order, int maxDegree) {
+
     bool *visited = new bool[maxDegree + 1];
 
     int *coloursLF = new int[order];
@@ -309,10 +339,14 @@ void coloursLF(Vector *adjMat, int *degreeSequence, long long int order) {
         coloursLF[i] = -1; // No colour at the beginning
     }
 
-    // Contains information if this ID was used
-    bool *vertexID = new bool[order];
-    for (int i = 0; i < order; ++i) {
-        vertexID[i] = false;
+    int index = 0;
+    for (int k = 0; k < maxDegree + 1; k++) {
+        int first = index;
+        while (arr[index].degree == arr[index + 1].degree) {
+            index++;
+        }
+        mergeSortIDS(arr, first, index);
+        index++;
     }
 
     int vertex;
@@ -323,14 +357,7 @@ void coloursLF(Vector *adjMat, int *degreeSequence, long long int order) {
             visited[j] = false;
         }
 
-        // Find the next vertex with the current degree
-        for (int j = 0; j < order; j++) {
-            if (adjMat[j].Size() == degreeSequence[i] && !vertexID[j]) {
-                vertexID[j] = true;
-                vertex = j;
-                break;
-            }
-        }
+        vertex = arr[i].id;
 
         // Mark the colors of adjacent vertices as unavailable
         for (int j = 0; j < adjMat[vertex].Size(); ++j) {
@@ -359,7 +386,6 @@ void coloursLF(Vector *adjMat, int *degreeSequence, long long int order) {
 
     delete[] visited;
     delete[] coloursLF;
-    delete[] vertexID;
 }
 
 Vector *adjMatAlloc(long long int order) {
@@ -372,7 +398,7 @@ void freeSpace(Vector *adjMat) {
 }
 
 void printNotImplemented() {
-    //printf("\n?"); // vertices colours LFS
+    printf("\n?"); // vertices colours LF
     printf("\n?"); // vertices colours SLF
     printf("\n?"); // the number of different C4 subgraphs
 }

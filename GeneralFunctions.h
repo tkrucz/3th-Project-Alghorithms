@@ -6,11 +6,18 @@
 
 using namespace std;
 
-bool compare(int num1, int num2);
+struct Vertex_ID_AND_DEGREE{
+    int id;
+    int degree;
+};
 
-void merge(int *arr, int firstIndex, int middleIndex, int lastIndex);
+void merge(Vertex_ID_AND_DEGREE *arr, int firstIndex, int middleIndex, int lastIndex);
 
-void mergeSort(int *arr, int firstIndex, int lastIndex);
+void mergeSort(Vertex_ID_AND_DEGREE *arr, int firstIndex, int lastIndex);
+
+void merge2(Vertex_ID_AND_DEGREE *arr, int firstIndex, int middleIndex, int lastIndex);
+
+void mergeSortIDS(Vertex_ID_AND_DEGREE *arr, int firstIndex, int lastIndex);
 
 int getGraphOrder(char &tmp);
 
@@ -26,7 +33,7 @@ void bipartiteDFS(Vector *adjMat, long long int order, int start, bool *visited,
 
 void coloursGreedy(Vector *adjMat, long long int order, int maxDegree);
 
-void coloursLF(Vector *adjMat, int *degreeSequence, long long int order);
+void coloursLF(Vector *adjMat, Vertex_ID_AND_DEGREE *arr, long long int order, int maxDegree);
 
 Vector* adjMatAlloc(long long int order);
 
