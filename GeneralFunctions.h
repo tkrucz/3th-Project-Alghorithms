@@ -26,6 +26,8 @@ void bipartiteDFS(Vector *adjMat, long long int order, int start, bool *visited,
 
 void coloursGreedy(Vector *adjMat, long long int order, int maxDegree);
 
+void coloursLF(Vector *adjMat, int *degreeSequence, long long int order);
+
 Vector* adjMatAlloc(long long int order);
 
 void freeSpace(Vector *adjMat);

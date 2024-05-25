@@ -131,6 +131,8 @@ void degreeSequence(long long int order) {
     printf("\n"); // end after planarity
 
     coloursGreedy(adjMat, order, degreeSequence[0]);
+    printf("\n");
+    coloursLF(adjMat, degreeSequence, order);
 
     printNotImplemented();
 
@@ -257,20 +259,16 @@ void bipartiteDFS(Vector *adjMat, long long int order, int start, bool *visited,
 }
 
 void coloursGreedy(Vector *adjMat, long long int order, int maxDegree) {
-
     bool *visited = new bool[maxDegree + 1];
-    for (int i = 0; i < maxDegree + 1; ++i) {
-        visited[i] = false;
-    }
-
+    
     int *coloursGreedy = new int[order];
-    for (int i = 0; i < order ; ++i) {
+    for (int i = 0; i < order; ++i) {
         coloursGreedy[i] = -1; // No colour at the beginning
     }
     coloursGreedy[0] = 1;
 
 
-    for (int u = 0; u < order ; ++u) {
+    for (int u = 0; u < order; ++u) {
 
         for (int i = 0; i < maxDegree + 1; ++i) {
             visited[i] = false;
@@ -302,6 +300,68 @@ void coloursGreedy(Vector *adjMat, long long int order, int maxDegree) {
     delete[] coloursGreedy;
 }
 
+void coloursLF(Vector *adjMat, int *degreeSequence, long long int order) {
+    int maxDegree = degreeSequence[0];
+    bool *visited = new bool[maxDegree + 1];
+
+    int *coloursLF = new int[order];
+    for (int i = 0; i < order; ++i) {
+        coloursLF[i] = -1; // No colour at the beginning
+    }
+
+    // Contains information if this ID was used
+    bool *vertexID = new bool[order];
+    for (int i = 0; i < order; ++i) {
+        vertexID[i] = false;
+    }
+
+    int vertex;
+
+    for (int i = 0; i < order; ++i) {
+
+        for (int j = 0; j < maxDegree + 1; ++j) {
+            visited[j] = false;
+        }
+
+        // Find the next vertex with the current degree
+        for (int j = 0; j < order; j++) {
+            if (adjMat[j].Size() == degreeSequence[i] && !vertexID[j]) {
+                vertexID[j] = true;
+                vertex = j;
+                break;
+            }
+        }
+
+        // Mark the colors of adjacent vertices as unavailable
+        for (int j = 0; j < adjMat[vertex].Size(); ++j) {
+            int neighbour = adjMat[vertex].get(j) - 1;
+            if (coloursLF[neighbour] != -1) {
+                visited[coloursLF[neighbour] - 1] = true;
+            }
+        }
+
+        // Find the first available color
+        int color;
+        for (color = 0; color < maxDegree + 1; ++color) {
+            if (!visited[color]) {
+                break;
+            }
+        }
+
+        // Assign the found color to the current vertex
+        coloursLF[vertex] = color + 1;
+    }
+
+    // Print colours assigned by LF algorithm
+    for (int i = 0; i < order; ++i) {
+        printf("%d ", coloursLF[i]);
+    }
+
+    delete[] visited;
+    delete[] coloursLF;
+    delete[] vertexID;
+}
+
 Vector *adjMatAlloc(long long int order) {
     Vector *adjMat = new Vector[order];
     return adjMat;
@@ -312,12 +372,12 @@ void freeSpace(Vector *adjMat) {
 }
 
 void printNotImplemented() {
-    printf("\n?"); // vertices colours LFS
+    //printf("\n?"); // vertices colours LFS
     printf("\n?"); // vertices colours SLF
     printf("\n?"); // the number of different C4 subgraphs
 }
 
-void printAnswer(char &tmp){
+void printAnswer(char &tmp) {
     long long int order = getGraphOrder(tmp);
     degreeSequence(order);
     printf("\n"); // endl after number of complements edges
