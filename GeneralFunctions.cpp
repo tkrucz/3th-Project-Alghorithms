@@ -40,7 +40,7 @@ void merge(Vertex_ID_AND_DEGREE *arr, int firstIndex, int middleIndex, int lastI
     int k = 0;
 
     while (i <= middleIndex && j <= lastIndex) {
-        if (arr[i].degree > arr[j].degree) {
+        if (arr[i].degree > arr[j].degree || (arr[i].degree == arr[j].degree && arr[i].id < arr[j].id)) {
             tmp[k++] = arr[i++];
         } else {
             tmp[k++] = arr[j++];
@@ -73,48 +73,6 @@ void mergeSort(Vertex_ID_AND_DEGREE *arr, int firstIndex, int lastIndex) {
     merge(arr, firstIndex, middleIndex, lastIndex);
 }
 
-void merge2(Vertex_ID_AND_DEGREE *arr, int firstIndex, int middleIndex, int lastIndex) {
-    int size = lastIndex - firstIndex + 1;
-    Vertex_ID_AND_DEGREE *tmp = new Vertex_ID_AND_DEGREE[size];
-
-    int i = firstIndex;
-    int j = middleIndex + 1;
-    int k = 0;
-
-    while (i <= middleIndex && j <= lastIndex) {
-        if (arr[i].id < arr[j].id) {
-            tmp[k++] = arr[i++];
-        } else {
-            tmp[k++] = arr[j++];
-        }
-    }
-
-    while (i <= middleIndex) {
-        tmp[k++] = arr[i++];
-    }
-
-    while (j <= lastIndex) {
-        tmp[k++] = arr[j++];
-    }
-
-    for (int u = 0; u < size; u++) {
-        arr[firstIndex + u] = tmp[u];
-    }
-
-    delete[] tmp;
-}
-
-void mergeSortIDS(Vertex_ID_AND_DEGREE *arr, int firstIndex, int lastIndex) {
-    if (firstIndex >= lastIndex)
-        return;
-
-    int middleIndex = (firstIndex + lastIndex) / 2;
-    mergeSort(arr, firstIndex, middleIndex);
-    mergeSort(arr, middleIndex + 1, lastIndex);
-
-    merge2(arr, firstIndex, middleIndex, lastIndex);
-}
-
 int getGraphOrder(char &tmp) {
     return getNumber(tmp);
 }
@@ -130,6 +88,7 @@ void degreeSequence(long long int order) {
     }
 
     Vector *adjMat = adjMatAlloc(order);
+
     for (int i = 0; i < order; i++) {
         deg = getNumber(tmp);
         table[i].degree = deg;
@@ -158,11 +117,11 @@ void degreeSequence(long long int order) {
 
     printf("\n?"); // the eccentricity of vertices
     printf("\n?"); // planarity
-    printf("\n"); // end after planarity
+    printf("\n"); // endl after planarity
 
     coloursGreedy(adjMat, order, maxDegree);
-    //printf("\n");
-    //coloursLF(adjMat, table, order, maxDegree);
+    printf("\n"); // endl after colours greedy
+    coloursLF(adjMat, table, order, maxDegree);
 
     printNotImplemented();
 
@@ -188,8 +147,8 @@ int countComponents(Vector *adjMat, long long int order, long long int &compleme
         }
     }
 
-    complementsEdges = order * (order - 1) / 2;
-    edges = edges / 2;
+    complementsEdges = order * (order - 1) / 2; // formula for complements edges
+    edges = edges / 2; // dfs counts the same edges twice
     complementsEdges = complementsEdges - edges;
 
     delete[] visited;
@@ -339,16 +298,6 @@ void coloursLF(Vector *adjMat, Vertex_ID_AND_DEGREE *arr, long long int order, i
         coloursLF[i] = -1; // No colour at the beginning
     }
 
-    int index = 0;
-    for (int k = 0; k < maxDegree + 1; k++) {
-        int first = index;
-        while (arr[index].degree == arr[index + 1].degree) {
-            index++;
-        }
-        mergeSortIDS(arr, first, index);
-        index++;
-    }
-
     int vertex;
 
     for (int i = 0; i < order; ++i) {
@@ -375,11 +324,9 @@ void coloursLF(Vector *adjMat, Vertex_ID_AND_DEGREE *arr, long long int order, i
             }
         }
 
-        // Assign the found color to the current vertex
         coloursLF[vertex] = color + 1;
     }
 
-    // Print colours assigned by LF algorithm
     for (int i = 0; i < order; ++i) {
         printf("%d ", coloursLF[i]);
     }
@@ -398,7 +345,6 @@ void freeSpace(Vector *adjMat) {
 }
 
 void printNotImplemented() {
-    printf("\n?"); // vertices colours LF
     printf("\n?"); // vertices colours SLF
     printf("\n?"); // the number of different C4 subgraphs
 }

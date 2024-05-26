@@ -15,10 +15,6 @@ void merge(Vertex_ID_AND_DEGREE *arr, int firstIndex, int middleIndex, int lastI
 
 void mergeSort(Vertex_ID_AND_DEGREE *arr, int firstIndex, int lastIndex);
 
-void merge2(Vertex_ID_AND_DEGREE *arr, int firstIndex, int middleIndex, int lastIndex);
-
-void mergeSortIDS(Vertex_ID_AND_DEGREE *arr, int firstIndex, int lastIndex);
-
 int getGraphOrder(char &tmp);
 
 void degreeSequence(long long int order);
